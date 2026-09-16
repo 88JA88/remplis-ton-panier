@@ -79,7 +79,7 @@ document.addEventListener('click', (event) => {
 let pressTimer;
 document.addEventListener('pointerdown', (event) => {
   if (!event.target.classList.contains('catalog-name')) return;
-  pressTimer = window.setTimeout(() => { const name = event.target; const input = name.parentElement.parentElement.querySelector('.catalog-text'); name.hidden = true; input.hidden = false; input.focus(); input.select(); }, 550);
+  pressTimer = window.setTimeout(() => { const name = event.target; const input = name.parentElement.parentElement.querySelector('.catalog-text'); name.hidden = true; input.hidden = false; input.focus(); input.setSelectionRange(input.value.length, input.value.length); }, 550);
 });
 document.addEventListener('pointerup', () => window.clearTimeout(pressTimer));
 document.addEventListener('pointercancel', () => window.clearTimeout(pressTimer));
