@@ -63,7 +63,7 @@ $('#help-button').onclick = () => { $('#help-window').hidden = false; };
 $('#help-close').onclick = () => { $('#help-window').hidden = true; };
 $('#help-window').onclick = (event) => { if (event.target.id === 'help-window') $('#help-window').hidden = true; };
 document.querySelectorAll('.view-button').forEach((button) => { button.onclick = () => showView(button.dataset.view); });
-$('#new-list').onclick = () => { $('#confirm-new').hidden = false; };
+$('#new-list').onclick = () => { state.catalog.forEach((item) => { item.selected = false; }); save(); showView('selection'); };
 $('#confirm-no').onclick = () => { $('#confirm-new').hidden = true; };
 $('#confirm-yes').onclick = () => { state.catalog.forEach((item) => { item.selected = false; }); $('#confirm-new').hidden = true; save(); showView('selection'); };
 document.addEventListener('change', (event) => {
