@@ -22,6 +22,8 @@ button:focus-visible, textarea:focus-visible, input:focus-visible { outline: 3px
 .section-note { margin:3px 0 0; color:#5b6873; font-size:.82rem; }
 .catalog-tools { display:flex; align-items:center; gap:4px; }
 .small-button { min-height:30px; padding:3px 6px; color:#27313b; background:#e1e6e9; border:1px solid #95a3ad; border-radius:7px; font-size:.72rem; font-weight:700; }
+.restore-button { position:relative; display:inline-flex; align-items:center; cursor:pointer; }
+.restore-button input { position:absolute; inset:0; width:100%; height:100%; opacity:0; cursor:pointer; }
 .catalog-add { margin-bottom: 3px; }
 .catalog-list { column-count:2; column-gap:22px; }
 .letter-group h3 { margin: 7px 0 2px; color:#53616d; font-size:.84rem; border-bottom:1px solid #d1d7db; }

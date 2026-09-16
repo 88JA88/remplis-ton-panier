@@ -1,4 +1,4 @@
-const CACHE = 'liste-courses-v24';
+const CACHE = 'liste-courses-v25';
 self.addEventListener('install', event => event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(['./', './index.html', './style.css', './app.js', './manifest.webmanifest', './icon.svg']))));
 self.addEventListener('install', () => self.skipWaiting());
 self.addEventListener('activate', event => event.waitUntil(self.clients.claim()));
