@@ -40,7 +40,7 @@ function render() {
     const letter = item.text.charAt(0).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleUpperCase('fr-FR');
     const newLetter = letter !== previousLetter;
     previousLetter = letter;
-    return `<div class="catalog-item${newLetter ? ' alphabet-break' : ''}"><label><input type="checkbox" data-catalog-id="${item.id}" ${item.selected ? 'checked' : ''}><span>${escapeHtml(item.text)}</span></label><button class="catalog-delete" data-catalog-id="${item.id}" aria-label="Supprimer ${escapeHtml(item.text)}">×</button></div>`;
+    return `<div class="catalog-item${newLetter ? ' alphabet-break' : ''}"><label><input type="checkbox" data-catalog-id="${item.id}" ${item.selected ? 'checked' : ''}><input class="catalog-text" data-catalog-id="${item.id}" aria-label="Modifier ${escapeHtml(item.text)}" value="${escapeHtml(item.text)}"></label><button class="catalog-delete" data-catalog-id="${item.id}" aria-label="Supprimer ${escapeHtml(item.text)}">×</button></div>`;
   }).join('');
   const selectedCount = state.catalog.filter((item) => item.selected).length;
   $('#catalog-count').textContent = selectedCount ? `${selectedCount} sélectionnée${selectedCount > 1 ? 's' : ''}` : '';
@@ -68,6 +68,7 @@ $('#confirm-no').onclick = () => { $('#confirm-new').hidden = true; };
 $('#confirm-yes').onclick = () => { state.catalog.forEach((item) => { item.selected = false; }); $('#confirm-new').hidden = true; save(); showView('selection'); };
 document.addEventListener('change', (event) => {
   if (event.target.dataset.catalogId) { const item = state.catalog.find((entry) => entry.id === event.target.dataset.catalogId); item.selected = event.target.checked; save(); }
+  if (event.target.classList.contains('catalog-text')) { const item = state.catalog.find((entry) => entry.id === event.target.dataset.catalogId); const text = event.target.value.trim(); if (!text) state.catalog = state.catalog.filter((entry) => entry.id !== item.id); else item.text = text; save(); }
   if (event.target.classList.contains('item-checkbox')) { const item = state.items.find((entry) => entry.id === event.target.dataset.id); item.bought = event.target.checked; save(); }
   if (event.target.classList.contains('item-text')) { const item = state.items.find((entry) => entry.id === event.target.dataset.id); const text = event.target.value.trim(); if (!text) state.items = state.items.filter((entry) => entry.id !== item.id); else item.text = text; save(); }
   if (event.target.classList.contains('note-text')) { const item = state.items.find((entry) => entry.id === event.target.dataset.id); item.note = event.target.value; save(); }
