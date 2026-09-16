@@ -29,6 +29,15 @@ button:focus-visible, textarea:focus-visible, input:focus-visible { outline: 3px
 .catalog-item input { width:18px; height:18px; margin:0; accent-color:#176b3a; }
 .catalog-delete { width:22px; min-height:24px; padding:0; color:#8b1e1e; background:transparent; font-size:1.2rem; font-weight:400; line-height:1; }
 .validate-button { width:100%; margin-top:14px; min-height:42px; color:white; background:#176b3a; }
+.selection-actions { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:14px; }
+.selection-actions .validate-button { width:auto; margin-top:0; }
+.help-button { min-height:42px; color:#27313b; background:#e1e6e9; border:1px solid #95a3ad; font-size:.88rem; }
+.help-window { position:fixed; inset:0; z-index:10; display:grid; place-items:center; padding:18px; background:rgba(25,35,45,.45); }
+.help-card { width:min(100%,560px); max-height:90vh; overflow:auto; padding:16px; border-radius:12px; background:#fff; box-shadow:0 8px 30px rgba(0,0,0,.25); }
+.help-heading { display:flex; align-items:center; justify-content:space-between; gap:10px; border-bottom:1px solid #c8d0d6; padding-bottom:8px; }
+.help-heading h2 { margin:0; }
+.help-card p { margin:12px 0; font-size:.92rem; line-height:1.4; }
+.help-close { width:30px; min-height:30px; padding:0; color:#8b1e1e; background:transparent; font-size:1.35rem; font-weight:400; }
 .current-section { padding-top:12px; }
 .add-row { display: flex; align-items: stretch; gap: 8px; }
 input#items-input { flex: 1; min-width: 0; height: 40px; padding: 7px 9px; border: 1px solid #85939d; border-radius: 7px; background: white; font-size: 1rem; }

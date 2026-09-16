@@ -59,6 +59,9 @@ function render() {
 $('#add-items').onclick = addItems;
 $('#items-input').onkeydown = (event) => { if (event.key === 'Enter') { event.preventDefault(); addItems(); } };
 $('#validate-selection').onclick = () => { state.items = state.catalog.filter((item) => item.selected).map((item) => ({ id: makeId(), text: item.text, note: '', bought: false })); save(); showView('courses'); };
+$('#help-button').onclick = () => { $('#help-window').hidden = false; };
+$('#help-close').onclick = () => { $('#help-window').hidden = true; };
+$('#help-window').onclick = (event) => { if (event.target.id === 'help-window') $('#help-window').hidden = true; };
 document.querySelectorAll('.view-button').forEach((button) => { button.onclick = () => showView(button.dataset.view); });
 $('#new-list').onclick = () => { $('#confirm-new').hidden = false; };
 $('#confirm-no').onclick = () => { $('#confirm-new').hidden = true; };
