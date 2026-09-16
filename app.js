@@ -31,7 +31,7 @@ function showView(view) {
   document.querySelectorAll('.view-button').forEach((button) => button.classList.toggle('active', button.dataset.view === view));
 }
 function itemRow(item, bought) {
-  return `<div class="item-row${bought ? ' bought-row' : ''}"><input class="item-checkbox" data-id="${item.id}" aria-label="${bought ? 'Remettre' : 'Marquer comme acheté'} : ${escapeHtml(item.text)}" type="checkbox" ${bought ? 'checked' : ''}><input class="item-text" data-id="${item.id}" aria-label="Denrée" value="${escapeHtml(item.text)}"><input class="note-text" data-id="${item.id}" aria-label="Précision pour ${escapeHtml(item.text)}" value="${escapeHtml(item.note || '')}"></div>`;
+  return `<div class="item-row${bought ? ' bought-row' : ''}"><input class="item-checkbox" data-id="${item.id}" aria-label="${bought ? 'Remettre' : 'Marquer comme acheté'} : ${escapeHtml(item.text)}" type="checkbox" ${bought ? 'checked' : ''}><span class="course-name" data-id="${item.id}">${escapeHtml(item.text)}</span><input class="note-text" data-id="${item.id}" aria-label="Précision pour ${escapeHtml(item.text)}" value="${escapeHtml(item.note || '')}"></div>`;
 }
 function render() {
   const catalog = [...state.catalog].sort((a, b) => a.text.localeCompare(b.text, 'fr', { sensitivity: 'base' }));
@@ -74,6 +74,7 @@ document.addEventListener('change', (event) => {
   if (event.target.classList.contains('note-text')) { const item = state.items.find((entry) => entry.id === event.target.dataset.id); item.note = event.target.value; save(); }
 });
 document.addEventListener('click', (event) => {
+  if (event.target.classList.contains('course-name')) { const item = state.items.find((entry) => entry.id === event.target.dataset.id); item.bought = !item.bought; save(); }
   if (event.target.classList.contains('catalog-delete')) { state.catalog = state.catalog.filter((item) => item.id !== event.target.dataset.catalogId); save(); }
 });
 let pressTimer;

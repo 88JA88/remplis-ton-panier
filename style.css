@@ -55,6 +55,7 @@ input#items-input { flex: 1; min-width: 0; height: 40px; padding: 7px 9px; borde
 .item-checkbox { width: 22px; height: 22px; accent-color: #176b3a; cursor: pointer; }
 .item-text { width: 100%; min-width: 0; padding: 4px 2px; border: 1px solid transparent; border-radius: 5px; background: transparent; color: #19232d; font-size: .98rem; }
 .item-text:focus { border-color: #7b8993; background: white; }
+.course-name { min-width:0; padding:4px 2px; cursor:pointer; }
 .note-text { width: 100%; min-width: 0; padding: 4px 5px; border: 1px solid #b7c1c7; border-radius: 5px; background: white; color: #19232d; font-size: .82rem; }
 .note-text::placeholder { color: #7d8992; }
 .delete-button { width: 29px; min-height: 30px; padding: 0; color: #8b1e1e; background: transparent; font-size: 1.35rem; font-weight: 400; line-height: 1; }
