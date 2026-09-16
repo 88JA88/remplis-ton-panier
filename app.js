@@ -62,7 +62,16 @@ $('#validate-selection').onclick = () => { state.items = state.catalog.filter((i
 $('#help-button').onclick = () => { $('#help-window').hidden = false; };
 $('#help-close').onclick = () => { $('#help-window').hidden = true; };
 $('#help-window').onclick = (event) => { if (event.target.id === 'help-window') $('#help-window').hidden = true; };
-$('#backup-button').onclick = () => { const file = new Blob([JSON.stringify({ catalog: state.catalog }, null, 2)], { type: 'application/json' }); const link = document.createElement('a'); link.href = URL.createObjectURL(file); link.download = 'remplis-ton-panier-denrees.json'; link.click(); URL.revokeObjectURL(link.href); };
+function downloadBackup(file) { const link = document.createElement('a'); link.href = URL.createObjectURL(file); link.download = file.name; link.click(); window.setTimeout(() => URL.revokeObjectURL(link.href), 1000); }
+$('#backup-button').onclick = async () => {
+  const date = new Date().toISOString().slice(0, 10);
+  const file = new File([JSON.stringify({ catalog: state.catalog }, null, 2)], `remplis-ton-panier-denrees-${date}.json`, { type: 'application/json' });
+  if (navigator.share && navigator.canShare?.({ files: [file] })) {
+    try { await navigator.share({ files: [file], title: 'Sauvegarde Remplis ton panier' }); return; }
+    catch (error) { if (error.name === 'AbortError') return; }
+  }
+  downloadBackup(file);
+};
 $('#restore-input').onchange = async (event) => { const file = event.target.files[0]; if (!file) return; try { const saved = JSON.parse(await file.text()); if (Array.isArray(saved.catalog)) { state.catalog = saved.catalog.filter((item) => item && item.text).map((item) => ({ id: item.id || makeId(), text: String(item.text), selected: Boolean(item.selected) })); save(); } } catch { alert('Ce fichier de sauvegarde est invalide.'); } event.target.value = ''; };
 document.querySelectorAll('.view-button').forEach((button) => { button.onclick = () => showView(button.dataset.view); });
 $('#new-list').onclick = () => { state.catalog.forEach((item) => { item.selected = false; }); save(); showView('selection'); };
