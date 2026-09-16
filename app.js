@@ -40,7 +40,7 @@ function render() {
     const letter = item.text.charAt(0).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleUpperCase('fr-FR');
     const newLetter = letter !== previousLetter;
     previousLetter = letter;
-    return `<div class="catalog-item${newLetter ? ' alphabet-break' : ''}"><label><input type="checkbox" data-catalog-id="${item.id}" ${item.selected ? 'checked' : ''}><span class="catalog-name" data-catalog-id="${item.id}">${escapeHtml(item.text)}</span></label><input class="catalog-text" data-catalog-id="${item.id}" aria-label="Modifier ${escapeHtml(item.text)}" value="${escapeHtml(item.text)}" hidden><button class="catalog-delete" data-catalog-id="${item.id}" aria-label="Supprimer ${escapeHtml(item.text)}">×</button></div>`;
+    return `<div class="catalog-item${newLetter ? ' alphabet-break' : ''}"><input type="checkbox" data-catalog-id="${item.id}" ${item.selected ? 'checked' : ''}><span class="catalog-name" data-catalog-id="${item.id}">${escapeHtml(item.text)}</span><input class="catalog-text" data-catalog-id="${item.id}" aria-label="Modifier ${escapeHtml(item.text)}" value="${escapeHtml(item.text)}" hidden><button class="catalog-delete" data-catalog-id="${item.id}" aria-label="Supprimer ${escapeHtml(item.text)}">×</button></div>`;
   }).join('');
   const selectedCount = state.catalog.filter((item) => item.selected).length;
   $('#catalog-count').textContent = selectedCount ? `${selectedCount} sélectionnée${selectedCount > 1 ? 's' : ''}` : '';
@@ -74,16 +74,20 @@ document.addEventListener('change', (event) => {
   if (event.target.classList.contains('note-text')) { const item = state.items.find((entry) => entry.id === event.target.dataset.id); item.note = event.target.value; save(); }
 });
 document.addEventListener('click', (event) => {
+  if (event.target.classList.contains('catalog-name')) { if (longPressActive) { longPressActive = false; return; } const item = state.catalog.find((entry) => entry.id === event.target.dataset.catalogId); item.selected = !item.selected; save(); }
   if (event.target.classList.contains('course-name')) { const item = state.items.find((entry) => entry.id === event.target.dataset.id); item.bought = !item.bought; save(); }
   if (event.target.classList.contains('catalog-delete')) { state.catalog = state.catalog.filter((item) => item.id !== event.target.dataset.catalogId); save(); }
 });
 let pressTimer;
+let longPressActive = false;
 document.addEventListener('pointerdown', (event) => {
   if (!event.target.classList.contains('catalog-name')) return;
-  pressTimer = window.setTimeout(() => { const name = event.target; const input = name.parentElement.parentElement.querySelector('.catalog-text'); name.hidden = true; input.hidden = false; input.focus(); input.setSelectionRange(input.value.length, input.value.length); }, 550);
+  longPressActive = false;
+  pressTimer = window.setTimeout(() => { longPressActive = true; const name = event.target; const input = name.parentElement.querySelector('.catalog-text'); name.hidden = true; input.hidden = false; input.focus(); input.setSelectionRange(input.value.length, input.value.length); }, 550);
 });
 document.addEventListener('pointerup', () => window.clearTimeout(pressTimer));
 document.addEventListener('pointercancel', () => window.clearTimeout(pressTimer));
+document.addEventListener('contextmenu', (event) => { if (event.target.classList.contains('catalog-name')) event.preventDefault(); });
 function setDictationStatus(message, visible = true) { $('#dictation-status').textContent = message; $('#dictation-status').hidden = !visible; }
 function startDictation() {
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
