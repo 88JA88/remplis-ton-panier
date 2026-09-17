@@ -43,8 +43,6 @@ function render() {
     return `<div class="catalog-item${newLetter ? ' alphabet-break' : ''}"><input type="checkbox" data-catalog-id="${item.id}" ${item.selected ? 'checked' : ''}><span class="catalog-name" data-catalog-id="${item.id}">${escapeHtml(item.text)}</span><input class="catalog-text" data-catalog-id="${item.id}" aria-label="Modifier ${escapeHtml(item.text)}" value="${escapeHtml(item.text)}" hidden><button class="catalog-delete" data-catalog-id="${item.id}" aria-label="Supprimer ${escapeHtml(item.text)}">×</button></div>`;
   }).join('');
   const selectedCount = state.catalog.filter((item) => item.selected).length;
-  $('#catalog-count').textContent = selectedCount ? `${selectedCount} sélectionnée${selectedCount > 1 ? 's' : ''}` : '';
-  $('#empty-catalog').hidden = state.catalog.length > 0;
   const active = state.items.filter((item) => !item.bought);
   const bought = state.items.filter((item) => item.bought);
   $('#active-list').innerHTML = active.map((item) => itemRow(item, false)).join('');

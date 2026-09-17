@@ -2,26 +2,26 @@
 * { box-sizing: border-box; }
 body { margin: 0; min-height: 100vh; }
 button, textarea, input { font: inherit; }
-.app-shell { max-width: 680px; margin: auto; padding: max(12px, env(safe-area-inset-top)) 14px calc(24px + env(safe-area-inset-bottom)); }
-.app-header { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding-bottom: 8px; border-bottom: 1px solid #c8d0d6; }
+.app-shell { max-width: 680px; margin: auto; padding: max(8px, env(safe-area-inset-top)) 14px calc(16px + env(safe-area-inset-bottom)); }
+.app-header { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding-bottom: 4px; border-bottom: 1px solid #c8d0d6; }
 h1 { margin: 0; font-size: 1.1rem; }
 h2 { margin: 0; font-size: 1.05rem; }
 .header-actions { display: flex; gap: 5px; }
-.view-switch { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; padding: 10px 0 8px; }
+.view-switch { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; padding: 6px 0 4px; }
 .view-button { min-height: 34px; padding: 4px 8px; color: #53616d; background: #e1e6e9; border: 1px solid #b1bcc3; font-size: .86rem; }
 .view-button.active { color: white; background: #46515b; border-color: #46515b; }
-.app-view { padding-top: 2px; }
+.app-view { padding-top: 0; }
 button { border: 0; border-radius: 9px; min-height: 44px; font-weight: 750; cursor: pointer; }
 button:focus-visible, textarea:focus-visible, input:focus-visible { outline: 3px solid #e3a600; outline-offset: 2px; }
-.new-list-button { min-height: 36px; padding: 5px 9px; color: #27313b; background: #e1e6e9; border: 1px solid #95a3ad; font-size: .82rem; }
-.dictation-button { min-height: 36px; padding: 5px 9px; color: white; background: #176b3a; font-size: .82rem; }
+.new-list-button { min-height: 32px; padding: 3px 8px; color: #27313b; background: #e1e6e9; border: 1px solid #95a3ad; font-size: .82rem; }
+.dictation-button { min-height: 32px; padding: 3px 8px; color: white; background: #176b3a; font-size: .82rem; }
 .dictation-button.listening { background: #9f2626; }
 .add-area { padding: 8px 0 6px; }
 .catalog-section { padding: 10px 0 18px; border-bottom: 1px solid #aeb9c0; }
-.section-heading { display:flex; justify-content:space-between; align-items:baseline; gap:10px; padding: 2px 0 5px; }
+.section-heading { display:flex; justify-content:space-between; align-items:baseline; gap:10px; padding: 0 0 3px; }
 .section-note { margin:3px 0 0; color:#5b6873; font-size:.82rem; }
-.catalog-tools { display:flex; align-items:center; gap:4px; }
-.small-button { min-height:30px; padding:3px 6px; color:#27313b; background:#e1e6e9; border:1px solid #95a3ad; border-radius:7px; font-size:.72rem; font-weight:700; }
+.catalog-tools { display:grid; grid-template-columns:repeat(4, minmax(0, 1fr)); width:100%; align-items:stretch; gap:4px; }
+.small-button { min-width:0; min-height:32px; padding:2px 4px; color:#27313b; background:#e1e6e9; border:1px solid #95a3ad; border-radius:7px; font-size:.72rem; font-weight:700; }
 .restore-button { position:relative; display:inline-flex; align-items:center; cursor:pointer; }
 .restore-button input { position:absolute; inset:0; width:100%; height:100%; opacity:0; cursor:pointer; }
 .catalog-add { margin-bottom: 3px; }
@@ -37,10 +37,8 @@ button:focus-visible, textarea:focus-visible, input:focus-visible { outline: 3px
 .catalog-item.alphabet-break { margin-top: 4px; }
 .catalog-item input { width:18px; height:18px; margin:0; accent-color:#176b3a; }
 .catalog-delete { width:22px; min-height:24px; padding:0; color:#8b1e1e; background:transparent; font-size:1.2rem; font-weight:400; line-height:1; }
-.validate-button { width:100%; margin-top:14px; min-height:42px; color:white; background:#176b3a; }
-.selection-actions { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:14px; }
-.selection-actions .validate-button { width:auto; margin-top:0; }
-.help-button { min-height:42px; color:#27313b; background:#e1e6e9; border:1px solid #95a3ad; font-size:.88rem; }
+.validate-button { color:white; background:#176b3a; }
+.help-button { color:#27313b; background:#e1e6e9; border:1px solid #95a3ad; }
 .help-window { position:fixed; inset:0; z-index:10; display:grid; place-items:center; padding:18px; background:rgba(25,35,45,.45); }
 .help-card { width:min(100%,560px); max-height:90vh; overflow:auto; padding:16px; border-radius:12px; background:#fff; box-shadow:0 8px 30px rgba(0,0,0,.25); }
 .help-heading { display:flex; align-items:center; justify-content:space-between; gap:10px; border-bottom:1px solid #c8d0d6; padding-bottom:8px; }
