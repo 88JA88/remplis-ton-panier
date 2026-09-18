@@ -27,7 +27,6 @@ function addItems() {
 function showView(view) {
   $('#selection-view').hidden = view !== 'selection';
   $('#courses-view').hidden = view !== 'courses';
-  $('#selection-actions').hidden = view !== 'selection';
   document.querySelectorAll('.view-button').forEach((button) => button.classList.toggle('active', button.dataset.view === view));
 }
 function itemRow(item, bought) {
@@ -107,7 +106,6 @@ function startDictation() {
   dictationWanted = true; $('#dictation-button').textContent = 'Arrêter'; $('#dictation-button').classList.add('listening'); setDictationStatus('Micro ouvert — dictez vos denrées.'); try { recognition.start(); } catch {}
 }
 function stopDictation() { dictationWanted = false; recognition?.stop(); $('#dictation-button').textContent = 'Dictée'; $('#dictation-button').classList.remove('listening'); setDictationStatus('', false); }
-$('#dictation-button').onclick = () => { if (dictationWanted) stopDictation(); else startDictation(); };
 $('#refresh-button').onclick = () => window.location.reload();
 if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('service-worker.js'));
 render();
