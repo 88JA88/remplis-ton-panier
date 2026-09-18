@@ -27,6 +27,8 @@ function addItems() {
 function showView(view) {
   $('#selection-view').hidden = view !== 'selection';
   $('#courses-view').hidden = view !== 'courses';
+  $('#selection-header').hidden = view !== 'selection';
+  $('#selection-nav').hidden = view !== 'selection';
   document.querySelectorAll('.view-button').forEach((button) => button.classList.toggle('active', button.dataset.view === view));
 }
 function itemRow(item, bought) {
@@ -57,6 +59,8 @@ $('#add-items').onclick = addItems;
 $('#items-input').onkeydown = (event) => { if (event.key === 'Enter') { event.preventDefault(); addItems(); } };
 $('#validate-selection').onclick = () => { state.items = state.catalog.filter((item) => item.selected).map((item) => ({ id: makeId(), text: item.text, note: '', bought: false })); save(); showView('courses'); };
 $('#help-button').onclick = () => { $('#help-window').hidden = false; };
+$('#courses-help-button').onclick = () => { $('#help-window').hidden = false; };
+$('#back-to-selection').onclick = () => showView('selection');
 $('#help-close').onclick = () => { $('#help-window').hidden = true; };
 $('#help-window').onclick = (event) => { if (event.target.id === 'help-window') $('#help-window').hidden = true; };
 function downloadBackup(file) { const link = document.createElement('a'); link.href = URL.createObjectURL(file); link.download = file.name; link.click(); window.setTimeout(() => URL.revokeObjectURL(link.href), 1000); }
