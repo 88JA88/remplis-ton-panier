@@ -1,4 +1,5 @@
 const STORAGE_KEY = 'liste-courses-v3';
+const STARTER_CATALOG = ['Pain', 'Lait', 'Œufs', 'Beurre', 'Fruits', 'Légumes', 'Pâtes', 'Riz', 'Café', 'Eau'];
 const $ = (selector) => document.querySelector(selector);
 let recognition = null;
 let dictationWanted = false;
@@ -7,7 +8,9 @@ let state = loadState();
 function makeId() { return crypto.randomUUID?.() || `${Date.now()}-${Math.random()}`; }
 function loadState() {
   try {
-    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    const storedState = localStorage.getItem(STORAGE_KEY);
+    if (!storedState) return { catalog: STARTER_CATALOG.map((text) => ({ id: makeId(), text, selected: false })), items: [] };
+    const saved = JSON.parse(storedState);
     if (saved?.catalog) return saved;
     const oldItems = saved?.items || [];
     return { catalog: oldItems.map((item) => ({ id: item.id || makeId(), text: item.text, selected: !item.bought })), items: [] };
