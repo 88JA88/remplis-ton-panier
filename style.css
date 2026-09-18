@@ -7,6 +7,7 @@ button, textarea, input { font: inherit; }
 h1 { margin: 0; font-size: 1.1rem; }
 h2 { margin: 0; font-size: 1.05rem; }
 .top-actions { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; flex: 1; }
+.top-actions .small-button { min-height:32px; padding:3px 8px; font-size:.82rem; text-align:center; justify-content:center; }
 .view-switch { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; padding: 4px 0; }
 .view-button { min-height: 34px; padding: 4px 8px; color: #53616d; background: #e1e6e9; border: 1px solid #b1bcc3; font-size: .86rem; }
 .view-button.active { color: white; background: #46515b; border-color: #46515b; }
@@ -49,8 +50,9 @@ button:focus-visible, textarea:focus-visible, input:focus-visible { outline: 3px
 .help-close { width:30px; min-height:30px; padding:0; color:#8b1e1e; background:transparent; font-size:1.35rem; font-weight:400; }
 .current-section { padding-top:12px; }
 .add-row { display: flex; align-items: stretch; gap: 8px; }
-input#items-input { flex: 1; min-width: 0; height: 40px; padding: 7px 9px; border: 1px solid #85939d; border-radius: 7px; background: white; font-size: 1rem; }
-.add-button { min-width: 78px; min-height: 40px; padding: 6px; color: white; background: #176b3a; font-size: .92rem; }
+input#items-input { flex: 0 1 48%; min-width: 0; height: 40px; padding: 7px 9px; border: 2px solid #1f6fae; border-radius: 7px; background: white; font-size: 1rem; }
+.add-button { min-width: 78px; min-height: 40px; padding: 6px; color: #1f6fae; background: white; border: 2px solid #1f6fae; font-size: .92rem; }
+#backup-button { min-height:32px; padding:3px 8px; color:#27313b; background:#e1e6e9; border:1px solid #95a3ad; font-size:.82rem; }
 .dictation-status { margin: 5px 0 0; color: #176b3a; font-size: .82rem; }
 .list-heading { display: flex; justify-content: space-between; align-items: baseline; padding: 6px 0 4px; border-bottom: 1px solid #788792; }
 #item-count, #bought-count { color: #53616d; font-size: .95rem; }
