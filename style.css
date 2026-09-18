@@ -7,7 +7,7 @@ button, textarea, input { font: inherit; }
 h1 { margin: 0; font-size: 1.1rem; }
 h2 { margin: 0; font-size: 1.05rem; }
 .header-actions { display: flex; gap: 5px; }
-.view-switch { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; padding: 4px 0; }
+.view-switch { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px; padding: 4px 0; }
 .view-button { min-height: 34px; padding: 4px 8px; color: #53616d; background: #e1e6e9; border: 1px solid #b1bcc3; font-size: .86rem; }
 .view-button.active { color: white; background: #46515b; border-color: #46515b; }
 .app-view { padding-top: 0; }
@@ -15,6 +15,7 @@ button { border: 0; border-radius: 9px; min-height: 44px; font-weight: 750; curs
 button:focus-visible, textarea:focus-visible, input:focus-visible { outline: 3px solid #e3a600; outline-offset: 2px; }
 .new-list-button { min-height: 32px; padding: 3px 8px; color: #27313b; background: #e1e6e9; border: 1px solid #95a3ad; font-size: .82rem; }
 .dictation-button { min-height: 32px; padding: 3px 8px; color: white; background: #176b3a; font-size: .82rem; }
+.nav-dictation-button { min-height: 34px; padding: 4px 8px; }
 .dictation-button.listening { background: #9f2626; }
 .add-area { padding: 8px 0 6px; }
 .catalog-section { padding: 10px 0 18px; border-bottom: 1px solid #aeb9c0; }
