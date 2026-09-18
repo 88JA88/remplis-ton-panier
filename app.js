@@ -108,5 +108,6 @@ function startDictation() {
 }
 function stopDictation() { dictationWanted = false; recognition?.stop(); $('#dictation-button').textContent = 'Dictée'; $('#dictation-button').classList.remove('listening'); setDictationStatus('', false); }
 $('#dictation-button').onclick = () => { if (dictationWanted) stopDictation(); else startDictation(); };
+$('#refresh-button').onclick = () => window.location.reload();
 if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('service-worker.js'));
 render();
