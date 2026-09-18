@@ -39,7 +39,7 @@ button:focus-visible, textarea:focus-visible, input:focus-visible { outline: 3px
 .catalog-item.alphabet-break { margin-top: 4px; }
 .catalog-item input[type="checkbox"] { width:18px; height:18px; margin:0; accent-color:#176b3a; }
 .catalog-delete { width:22px; min-height:24px; padding:0; color:#8b1e1e; background:transparent; font-size:1.2rem; font-weight:400; line-height:1; }
-.validate-button { color:white; background:#176b3a; }
+.validate-button { min-height:32px; padding:3px 8px; color:#27313b; background:white; border:2px solid #244b70; font-size:.82rem; }
 .help-button { color:#27313b; background:#e1e6e9; border:1px solid #95a3ad; }
 .courses-header { display:grid; grid-template-columns:auto minmax(0, 1fr) minmax(0, 1fr); gap:4px; }
 .courses-icon { display:grid; place-items:center; width:32px; height:32px; border-radius:7px; color:white; background:#9f2626; }
