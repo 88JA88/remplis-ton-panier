@@ -7,10 +7,9 @@ button, textarea, input { font: inherit; }
 h1 { margin: 0; font-size: 1.1rem; }
 h2 { margin: 0; font-size: 1.05rem; }
 .top-actions { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; flex: 1; }
-.view-switch { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; padding: 4px 0; }
+.view-switch { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; padding: 4px 0; }
 .view-button { min-height: 34px; padding: 4px 8px; color: #53616d; background: #e1e6e9; border: 1px solid #b1bcc3; font-size: .86rem; }
 .view-button.active { color: white; background: #46515b; border-color: #46515b; }
-.courses-button { border: 2px solid #9f2626; }
 .app-view { padding-top: 0; }
 button { border: 0; border-radius: 9px; min-height: 44px; font-weight: 750; cursor: pointer; }
 button:focus-visible, textarea:focus-visible, input:focus-visible { outline: 3px solid #e3a600; outline-offset: 2px; }

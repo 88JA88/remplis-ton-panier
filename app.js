@@ -80,7 +80,7 @@ $('#confirm-no').onclick = () => { $('#confirm-new').hidden = true; };
 $('#confirm-yes').onclick = () => { state.catalog.forEach((item) => { item.selected = false; }); $('#confirm-new').hidden = true; save(); showView('selection'); };
 document.addEventListener('change', (event) => {
   if (event.target.dataset.catalogId) { const item = state.catalog.find((entry) => entry.id === event.target.dataset.catalogId); item.selected = event.target.checked; save(); }
-  if (event.target.classList.contains('catalog-text')) { const item = state.catalog.find((entry) => entry.id === event.target.dataset.catalogId); const text = event.target.value.trim(); if (!text) state.catalog = state.catalog.filter((entry) => entry.id !== item.id); else item.text = text; save(); }
+  if (event.target.classList.contains('catalog-text')) { const item = state.catalog.find((entry) => entry.id === event.target.dataset.catalogId); const text = event.target.value.trim(); if (!text) { if (window.confirm(`Supprimer « ${item.text} » ?`)) { state.catalog = state.catalog.filter((entry) => entry.id !== item.id); save(); } else render(); } else { item.text = text; save(); } }
   if (event.target.classList.contains('item-checkbox')) { const item = state.items.find((entry) => entry.id === event.target.dataset.id); item.bought = event.target.checked; save(); }
   if (event.target.classList.contains('item-text')) { const item = state.items.find((entry) => entry.id === event.target.dataset.id); const text = event.target.value.trim(); if (!text) state.items = state.items.filter((entry) => entry.id !== item.id); else item.text = text; save(); }
   if (event.target.classList.contains('note-text')) { const item = state.items.find((entry) => entry.id === event.target.dataset.id); item.note = event.target.value; save(); }
@@ -88,7 +88,7 @@ document.addEventListener('change', (event) => {
 document.addEventListener('click', (event) => {
   if (event.target.classList.contains('catalog-name')) { if (longPressActive) { longPressActive = false; return; } const item = state.catalog.find((entry) => entry.id === event.target.dataset.catalogId); item.selected = !item.selected; save(); }
   if (event.target.classList.contains('course-name')) { const item = state.items.find((entry) => entry.id === event.target.dataset.id); item.bought = !item.bought; save(); }
-  if (event.target.classList.contains('catalog-delete')) { state.catalog = state.catalog.filter((item) => item.id !== event.target.dataset.catalogId); save(); }
+  if (event.target.classList.contains('catalog-delete')) { const item = state.catalog.find((entry) => entry.id === event.target.dataset.catalogId); if (item && window.confirm(`Supprimer « ${item.text} » ?`)) { state.catalog = state.catalog.filter((entry) => entry.id !== item.id); save(); } }
 });
 let pressTimer;
 let longPressActive = false;
