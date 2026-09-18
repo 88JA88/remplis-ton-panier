@@ -89,13 +89,15 @@ document.addEventListener('click', (event) => {
 });
 let pressTimer;
 let longPressActive = false;
+let editingCatalogInput = null;
 document.addEventListener('pointerdown', (event) => {
   if (!event.target.classList.contains('catalog-name')) return;
   longPressActive = false;
-  pressTimer = window.setTimeout(() => { longPressActive = true; const name = event.target; const input = name.parentElement.querySelector('.catalog-text'); name.hidden = true; input.hidden = false; input.focus(); input.setSelectionRange(input.value.length, input.value.length); }, 550);
+  editingCatalogInput = null;
+  pressTimer = window.setTimeout(() => { longPressActive = true; const name = event.target; const input = name.parentElement.querySelector('.catalog-text'); name.hidden = true; input.hidden = false; editingCatalogInput = input; }, 550);
 });
-document.addEventListener('pointerup', () => window.clearTimeout(pressTimer));
-document.addEventListener('pointercancel', () => window.clearTimeout(pressTimer));
+document.addEventListener('pointerup', () => { window.clearTimeout(pressTimer); if (longPressActive && editingCatalogInput) { editingCatalogInput.focus(); editingCatalogInput.setSelectionRange(editingCatalogInput.value.length, editingCatalogInput.value.length); } });
+document.addEventListener('pointercancel', () => { window.clearTimeout(pressTimer); editingCatalogInput = null; });
 document.addEventListener('contextmenu', (event) => { if (event.target.classList.contains('catalog-name')) event.preventDefault(); });
 function setDictationStatus(message, visible = true) { $('#dictation-status').textContent = message; $('#dictation-status').hidden = !visible; }
 function startDictation() {
