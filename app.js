@@ -3,17 +3,23 @@ const STARTER_CATALOG = ['Pain', 'Lait', 'Œufs', 'Beurre', 'Fruits', 'Légumes'
 const $ = (selector) => document.querySelector(selector);
 let recognition = null;
 let dictationWanted = false;
+let addColumn = 'left';
 let state = loadState();
 
 function makeId() { return crypto.randomUUID?.() || `${Date.now()}-${Math.random()}`; }
 function loadState() {
   try {
     const storedState = localStorage.getItem(STORAGE_KEY);
-    if (!storedState) return { catalog: STARTER_CATALOG.map((text) => ({ id: makeId(), text, selected: false })), items: [] };
+    if (!storedState) return { catalog: STARTER_CATALOG.map((text) => ({ id: makeId(), text, selected: false, column: 'left' })), items: [] };
     const saved = JSON.parse(storedState);
-    if (saved?.catalog) return saved;
+    if (saved?.catalog) {
+      const catalog = saved.catalog.map((item) => ({ ...item, column: item.column === 'right' ? 'right' : 'left' }));
+      const migrated = { ...saved, catalog };
+      if (saved.catalog.some((item) => !item.column)) localStorage.setItem(STORAGE_KEY, JSON.stringify(migrated));
+      return migrated;
+    }
     const oldItems = saved?.items || [];
-    return { catalog: oldItems.map((item) => ({ id: item.id || makeId(), text: item.text, selected: !item.bought })), items: [] };
+    return { catalog: oldItems.map((item) => ({ id: item.id || makeId(), text: item.text, selected: !item.bought, column: 'left' })), items: [] };
   } catch { return { catalog: [], items: [] }; }
 }
 function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); render(); }
@@ -22,7 +28,7 @@ function splitItems(text) { return text.replace(/\bvirgules?\b/gi, ',').replace(
 
 function addItems() {
   splitItems($('#items-input').value).forEach((text) => {
-    if (!state.catalog.some((item) => item.text.toLocaleLowerCase() === text.toLocaleLowerCase())) state.catalog.push({ id: makeId(), text, selected: true });
+    if (!state.catalog.some((item) => item.text.toLocaleLowerCase() === text.toLocaleLowerCase())) state.catalog.push({ id: makeId(), text, selected: true, column: addColumn });
   });
   $('#items-input').value = '';
   save();
@@ -39,13 +45,19 @@ function itemRow(item, bought) {
 }
 function render() {
   const catalog = [...state.catalog].sort((a, b) => a.text.localeCompare(b.text, 'fr', { sensitivity: 'base' }));
-  let previousLetter = '';
-  $('#catalog-list').innerHTML = catalog.map((item) => {
-    const letter = item.text.charAt(0).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleUpperCase('fr-FR');
-    const newLetter = letter !== previousLetter;
-    previousLetter = letter;
-    return `<div class="catalog-item${newLetter ? ' alphabet-break' : ''}"><input type="checkbox" data-catalog-id="${item.id}" ${item.selected ? 'checked' : ''}><span class="catalog-name" data-catalog-id="${item.id}">${escapeHtml(item.text)}</span><input class="catalog-text" data-catalog-id="${item.id}" aria-label="Modifier ${escapeHtml(item.text)}" value="${escapeHtml(item.text)}" hidden><button class="catalog-delete" data-catalog-id="${item.id}" aria-label="Supprimer ${escapeHtml(item.text)}">×</button></div>`;
-  }).join('');
+  const catalogRows = (column) => {
+    let previousLetter = '';
+    return catalog.filter((item) => item.column === column).map((item) => {
+      const letter = item.text.charAt(0).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleUpperCase('fr-FR');
+      const newLetter = letter !== previousLetter;
+      previousLetter = letter;
+      const destination = column === 'left' ? 'right' : 'left';
+      const label = destination === 'right' ? 'Déplacer à droite' : 'Déplacer à gauche';
+      const button = destination === 'right' ? 'D' : 'G';
+      return `<div class="catalog-item${newLetter ? ' alphabet-break' : ''}"><input type="checkbox" data-catalog-id="${item.id}" ${item.selected ? 'checked' : ''}><span class="catalog-name" data-catalog-id="${item.id}">${escapeHtml(item.text)}</span><input class="catalog-text" data-catalog-id="${item.id}" aria-label="Modifier ${escapeHtml(item.text)}" value="${escapeHtml(item.text)}" hidden><button class="catalog-column-button" data-catalog-id="${item.id}" aria-label="${label} : ${escapeHtml(item.text)}">${button}</button><button class="catalog-delete" data-catalog-id="${item.id}" aria-label="Supprimer ${escapeHtml(item.text)}">×</button></div>`;
+    }).join('');
+  };
+  $('#catalog-list').innerHTML = `<div class="catalog-column">${catalogRows('left')}</div><div class="catalog-column">${catalogRows('right')}</div>`;
   const selectedCount = state.catalog.filter((item) => item.selected).length;
   const active = state.items.filter((item) => !item.bought);
   const bought = state.items.filter((item) => item.bought);
@@ -59,6 +71,9 @@ function render() {
 }
 
 $('#add-items').onclick = addItems;
+function chooseAddColumn(column) { addColumn = column; $('#add-left').classList.toggle('active', column === 'left'); $('#add-right').classList.toggle('active', column === 'right'); }
+$('#add-left').onclick = () => chooseAddColumn('left');
+$('#add-right').onclick = () => chooseAddColumn('right');
 $('#items-input').onkeydown = (event) => { if (event.key === 'Enter') { event.preventDefault(); addItems(); } };
 $('#validate-selection').onclick = () => { state.items = state.catalog.filter((item) => item.selected).map((item) => ({ id: makeId(), text: item.text, note: '', bought: false })); save(); showView('courses'); };
 $('#help-button').onclick = () => { $('#help-window').hidden = false; };
@@ -76,7 +91,7 @@ $('#backup-button').onclick = async () => {
   }
   downloadBackup(file);
 };
-$('#restore-input').onchange = async (event) => { const file = event.target.files[0]; if (!file) return; try { const saved = JSON.parse(await file.text()); if (Array.isArray(saved.catalog)) { state.catalog = saved.catalog.filter((item) => item && item.text).map((item) => ({ id: item.id || makeId(), text: String(item.text), selected: Boolean(item.selected) })); save(); } } catch { alert('Ce fichier de sauvegarde est invalide.'); } event.target.value = ''; };
+$('#restore-input').onchange = async (event) => { const file = event.target.files[0]; if (!file) return; try { const saved = JSON.parse(await file.text()); if (Array.isArray(saved.catalog)) { state.catalog = saved.catalog.filter((item) => item && item.text).map((item) => ({ id: item.id || makeId(), text: String(item.text), selected: Boolean(item.selected), column: item.column === 'right' ? 'right' : 'left' })); save(); } } catch { alert('Ce fichier de sauvegarde est invalide.'); } event.target.value = ''; };
 document.querySelectorAll('.view-button').forEach((button) => { button.onclick = () => showView(button.dataset.view); });
 $('#new-list').onclick = () => { state.catalog.forEach((item) => { item.selected = false; }); save(); showView('selection'); };
 $('#confirm-no').onclick = () => { $('#confirm-new').hidden = true; };
@@ -90,6 +105,7 @@ document.addEventListener('change', (event) => {
 });
 document.addEventListener('click', (event) => {
   if (event.target.classList.contains('catalog-name')) { if (longPressActive) { longPressActive = false; return; } const item = state.catalog.find((entry) => entry.id === event.target.dataset.catalogId); item.selected = !item.selected; save(); }
+  if (event.target.classList.contains('catalog-column-button')) { const item = state.catalog.find((entry) => entry.id === event.target.dataset.catalogId); if (item) { item.column = item.column === 'right' ? 'left' : 'right'; save(); } }
   if (event.target.classList.contains('course-name')) { const item = state.items.find((entry) => entry.id === event.target.dataset.id); item.bought = !item.bought; save(); }
   if (event.target.classList.contains('catalog-delete')) { const item = state.catalog.find((entry) => entry.id === event.target.dataset.catalogId); if (item && window.confirm(`Supprimer « ${item.text} » ?`)) { state.catalog = state.catalog.filter((entry) => entry.id !== item.id); save(); } }
 });
