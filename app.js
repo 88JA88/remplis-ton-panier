@@ -3,7 +3,6 @@ const STARTER_CATALOG = ['Pain', 'Lait', 'Œufs', 'Beurre', 'Fruits', 'Légumes'
 const $ = (selector) => document.querySelector(selector);
 let recognition = null;
 let dictationWanted = false;
-let addColumn = 'left';
 let state = loadState();
 
 function makeId() { return crypto.randomUUID?.() || `${Date.now()}-${Math.random()}`; }
@@ -26,9 +25,9 @@ function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); rend
 function escapeHtml(value) { return value.replace(/[&<>'"]/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[char])); }
 function splitItems(text) { return text.replace(/\bvirgules?\b/gi, ',').replace(/\bà la ligne\b/gi, '\n').split(/[,;\n]+/).map((item) => item.trim()).filter(Boolean); }
 
-function addItems() {
+function addItems(column = 'left') {
   splitItems($('#items-input').value).forEach((text) => {
-    if (!state.catalog.some((item) => item.text.toLocaleLowerCase() === text.toLocaleLowerCase())) state.catalog.push({ id: makeId(), text, selected: true, column: addColumn });
+    if (!state.catalog.some((item) => item.text.toLocaleLowerCase() === text.toLocaleLowerCase())) state.catalog.push({ id: makeId(), text, selected: true, column });
   });
   $('#items-input').value = '';
   save();
@@ -70,10 +69,8 @@ function render() {
   $('#bought-section').hidden = !bought.length;
 }
 
-$('#add-items').onclick = addItems;
-function chooseAddColumn(column) { addColumn = column; $('#add-left').classList.toggle('active', column === 'left'); $('#add-right').classList.toggle('active', column === 'right'); }
-$('#add-left').onclick = () => chooseAddColumn('left');
-$('#add-right').onclick = () => chooseAddColumn('right');
+$('#add-left').onclick = () => addItems('left');
+$('#add-right').onclick = () => addItems('right');
 $('#items-input').onkeydown = (event) => { if (event.key === 'Enter') { event.preventDefault(); addItems(); } };
 $('#validate-selection').onclick = () => { state.items = state.catalog.filter((item) => item.selected).map((item) => ({ id: makeId(), text: item.text, note: '', bought: false })); save(); showView('courses'); };
 $('#help-button').onclick = () => { $('#help-window').hidden = false; };

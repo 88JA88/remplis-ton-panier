@@ -53,11 +53,9 @@ button:focus-visible, textarea:focus-visible, input:focus-visible { outline: 3px
 .help-card p { margin:12px 0; font-size:.92rem; line-height:1.4; }
 .help-close { width:30px; min-height:30px; padding:0; color:#8b1e1e; background:transparent; font-size:1.35rem; font-weight:400; }
 .current-section { padding-top:12px; }
-.add-row { display: grid; grid-template-columns:32% 30px 30px 70px max-content; align-items: stretch; gap: 4px; }
+.add-row { display: grid; grid-template-columns:40% 30px 30px max-content; align-items: stretch; gap: 4px; }
 input#items-input { min-width: 0; height: 40px; padding: 7px 9px; border: 2px solid #1f6fae; border-radius: 7px; background: white; font-size: 1rem; }
 .add-column-button { min-height:32px; padding:0; color:#1f6fae; background:white; border:2px solid #1f6fae; border-radius:6px; font-size:.72rem; }
-.add-column-button.active { color:white; background:#1f6fae; }
-.add-button { min-width: 70px; min-height: 40px; padding: 6px; color: #1f6fae; background: white; border: 2px solid #1f6fae; font-size: .92rem; }
 #backup-button { min-height:32px; padding:3px 8px; color:#27313b; background:#e1e6e9; border:1px solid #95a3ad; font-size:.82rem; }
 .dictation-status { margin: 5px 0 0; color: #176b3a; font-size: .82rem; }
 .list-heading { display: flex; justify-content: space-between; align-items: baseline; padding: 6px 0 4px; border-bottom: 1px solid #788792; }
