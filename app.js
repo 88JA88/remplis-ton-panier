@@ -96,7 +96,13 @@ $('#confirm-yes').onclick = () => { state.catalog.forEach((item) => { item.selec
 document.addEventListener('change', (event) => {
   if (event.target.dataset.catalogId) { const item = state.catalog.find((entry) => entry.id === event.target.dataset.catalogId); item.selected = event.target.checked; save(); }
   if (event.target.classList.contains('catalog-text')) { const item = state.catalog.find((entry) => entry.id === event.target.dataset.catalogId); const text = event.target.value.trim(); if (!text) { if (window.confirm(`Supprimer « ${item.text} » ?`)) { state.catalog = state.catalog.filter((entry) => entry.id !== item.id); save(); } else render(); } else { item.text = text; save(); } }
-  if (event.target.classList.contains('item-checkbox')) { const item = state.items.find((entry) => entry.id === event.target.dataset.id); item.bought = event.target.checked; save(); }
+  if (event.target.classList.contains('item-checkbox')) {
+    const item = state.items.find((entry) => entry.id === event.target.dataset.id);
+    if (event.target.checked) {
+      event.target.closest('.item-row').classList.add('checking');
+      window.setTimeout(() => { item.bought = true; save(); }, 550);
+    } else { item.bought = false; save(); }
+  }
   if (event.target.classList.contains('item-text')) { const item = state.items.find((entry) => entry.id === event.target.dataset.id); const text = event.target.value.trim(); if (!text) state.items = state.items.filter((entry) => entry.id !== item.id); else item.text = text; save(); }
   if (event.target.classList.contains('note-text')) { const item = state.items.find((entry) => entry.id === event.target.dataset.id); item.note = event.target.value; save(); }
 });

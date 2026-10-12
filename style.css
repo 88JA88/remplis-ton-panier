@@ -62,6 +62,7 @@ input#items-input { min-width: 0; height: 40px; padding: 7px 9px; border: 2px so
 #item-count, #bought-count { color: #53616d; font-size: .95rem; }
 .shopping-list { margin: 0; }
 .item-row { display: grid; grid-template-columns: 27px minmax(0, 1fr) minmax(88px, .75fr); align-items: center; column-gap: 5px; min-height: 39px; padding-left: 22px; padding-right: 22px; border-bottom: 1px solid #c9d1d6; }
+.item-row.checking { background: #e5f2e9; }
 .bought-row { opacity: .72; }
 .item-checkbox { width: 22px; height: 22px; accent-color: #176b3a; cursor: pointer; }
 .item-text { width: 100%; min-width: 0; padding: 4px 2px; border: 1px solid transparent; border-radius: 5px; background: transparent; color: #19232d; font-size: .98rem; }
