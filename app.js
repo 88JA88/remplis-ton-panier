@@ -1,9 +1,27 @@
 const STORAGE_KEY = 'liste-courses-v3';
+const PRICE_DRAFT_KEY = 'liste-courses-price-draft-v1';
+const PRICE_HISTORY_KEY = 'liste-courses-price-history-v1';
+const PRICE_ARTICLE_KEY = 'liste-courses-price-article-v1';
 const STARTER_CATALOG = ['Pain', 'Lait', 'Œufs', 'Beurre', 'Fruits', 'Légumes', 'Pâtes', 'Riz', 'Café', 'Eau'];
 const $ = (selector) => document.querySelector(selector);
 let recognition = null;
 let dictationWanted = false;
 let state = loadState();
+let previousView = 'selection';
+const emptyPriceOffers = () => Array.from({ length: 3 }, (_, index) => ({ id: index + 1, count: 1, price: '', content: '', unit: '' }));
+function loadPriceOffers() {
+  try {
+    const stored = JSON.parse(localStorage.getItem(PRICE_DRAFT_KEY));
+    if (!Array.isArray(stored) || stored.length !== 3) return emptyPriceOffers();
+    return stored.map((offer, index) => ({ id: index + 1, count: Number(offer.count) > 0 ? offer.count : 1, price: offer.price || '', content: offer.content || '', unit: ['kg', 'g', 'l', 'cl'].includes(offer.unit) ? offer.unit : '' }));
+  } catch { return emptyPriceOffers(); }
+}
+function loadPriceHistory() { try { const stored = JSON.parse(localStorage.getItem(PRICE_HISTORY_KEY)); return Array.isArray(stored) ? stored : []; } catch { return []; } }
+let priceOffers = loadPriceOffers();
+let priceHistory = loadPriceHistory();
+let priceArticleName = localStorage.getItem(PRICE_ARTICLE_KEY) || '';
+function savePriceDraft() { localStorage.setItem(PRICE_DRAFT_KEY, JSON.stringify(priceOffers)); }
+function setPriceArticleName(name) { priceArticleName = name || ''; localStorage.setItem(PRICE_ARTICLE_KEY, priceArticleName); }
 
 function makeId() { return crypto.randomUUID?.() || `${Date.now()}-${Math.random()}`; }
 function loadState() {
@@ -33,14 +51,69 @@ function addItems(column = 'left') {
   save();
 }
 function showView(view) {
+  if (view !== 'price') previousView = view;
   $('#selection-view').hidden = view !== 'selection';
   $('#courses-view').hidden = view !== 'courses';
+  $('#price-view').hidden = view !== 'price';
   $('#selection-header').hidden = view !== 'selection';
   $('#selection-nav').hidden = view !== 'selection';
   document.querySelectorAll('.view-button').forEach((button) => button.classList.toggle('active', button.dataset.view === view));
+  if (view === 'price') renderPriceComparator();
+}
+function euro(value) { return `${new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value)}`; }
+function unitKind(unit) { return ['kg', 'g'].includes(unit) ? 'weight' : ['l', 'cl'].includes(unit) ? 'volume' : ''; }
+function comparisonKind() { return unitKind(priceOffers.find((offer) => offer.unit)?.unit || ''); }
+function priceResult(offer) {
+  const count = Number(offer.count);
+  const price = Number(String(offer.price).replace(',', '.'));
+  const content = Number(String(offer.content).replace(',', '.'));
+  if (!Number.isFinite(count) || count <= 0 || !Number.isFinite(price) || price < 0) return '<span class="result-placeholder">Renseignez le prix</span>';
+  const kind = unitKind(offer.unit);
+  if (!kind || !Number.isFinite(content) || content <= 0) return '<span class="result-placeholder">Renseignez le poids ou volume</span>';
+  const baseContent = offer.unit === 'kg' || offer.unit === 'l' ? content * 1000 : offer.unit === 'cl' ? content * 10 : content;
+  const perBase = price / (count * baseContent) * 1000;
+  const smallUnit = kind === 'weight' ? '100 g' : '100 ml';
+  const largeUnit = kind === 'weight' ? 'kg' : 'L';
+  const perSmall = price / (count * baseContent) * 100;
+  return `<strong>${euro(perBase)}</strong> <span>par ${largeUnit}</span><small>${euro(perSmall)} / ${smallUnit}</small>`;
+}
+function priceResultText(offer) {
+  const count = Number(offer.count);
+  const price = Number(String(offer.price).replace(',', '.'));
+  const content = Number(String(offer.content).replace(',', '.'));
+  const kind = unitKind(offer.unit);
+  if (!kind || !Number.isFinite(count) || count <= 0 || !Number.isFinite(price) || price < 0 || !Number.isFinite(content) || content <= 0) return 'Données incomplètes';
+  const baseContent = offer.unit === 'kg' || offer.unit === 'l' ? content * 1000 : offer.unit === 'cl' ? content * 10 : content;
+  return `${euro(price / (count * baseContent) * 1000)} / ${kind === 'weight' ? 'kg' : 'L'}`;
+}
+function renderPriceHistory() {
+  $('#price-history-list').innerHTML = priceHistory.length ? priceHistory.map((entry, historyIndex) => {
+    const filledOffers = entry.offers.map((offer, index) => ({ offer, index })).filter(({ offer }) => offer.price !== '' || offer.content !== '' || offer.unit);
+    return `<article class="history-entry"><div><strong>${escapeHtml(entry.label)}</strong><button class="delete-history-button" data-history-index="${historyIndex}" type="button">Supprimer</button></div><ul>${filledOffers.map(({ offer, index }) => `<li>Offre ${index + 1} — ${escapeHtml(String(offer.count))} article${Number(offer.count) > 1 ? 's' : ''} × ${escapeHtml(String(offer.content))} ${escapeHtml(offer.unit)} : <b>${escapeHtml(priceResultText(offer))}</b></li>`).join('') || '<li>Données incomplètes</li>'}</ul></article>`;
+  }).join('') : '<p class="empty-history">Aucune comparaison mémorisée pour le moment.</p>';
+}
+function savePriceComparison() {
+  const now = new Date();
+  const dateLabel = new Intl.DateTimeFormat('fr-FR', { dateStyle: 'short', timeStyle: 'short' }).format(now);
+  const label = `${priceArticleName ? `${priceArticleName} — ` : ''}Comparaison du ${dateLabel}`;
+  priceHistory.unshift({ label, date: now.toISOString(), article: priceArticleName, offers: priceOffers.map((offer) => ({ ...offer })) });
+  priceHistory = priceHistory.slice(0, 20);
+  localStorage.setItem(PRICE_HISTORY_KEY, JSON.stringify(priceHistory));
+  renderPriceHistory();
+}
+function renderPriceComparator() {
+  $('#price-article-name').textContent = priceArticleName ? `— ${priceArticleName}` : '— article à choisir';
+  const kind = comparisonKind();
+  const units = (offer) => {
+    const options = [['kg', 'kg'], ['g', 'g'], ['l', 'L'], ['cl', 'cl']];
+    return `<option value="" ${!offer.unit ? 'selected' : ''} disabled>Unité</option>${options.map(([value, label]) => `<option value="${value}" ${offer.unit === value ? 'selected' : ''} ${kind && unitKind(value) !== kind ? 'disabled' : ''}>${label}</option>`).join('')}`;
+  };
+  const lockNotice = kind ? `<p class="unit-lock">Comparaison verrouillée : ${kind === 'weight' ? 'poids' : 'volume'} <button id="reset-unit-lock" type="button">Changer</button></p>` : '<p class="unit-lock">Choisissez une unité : le comparateur gardera ensuite le même type pour les trois offres.</p>';
+  $('#price-offers').innerHTML = `${lockNotice}<div class="price-offer-grid">${priceOffers.map((offer, index) => `<article class="price-offer"><h3>Offre ${index + 1}</h3><label>Nombre d’articles<input data-price-field="count" data-offer="${index}" type="number" inputmode="decimal" min="1" step="1" required value="${offer.count}"></label><label>Poids ou volume par article<span class="content-input"><input data-price-field="content" data-offer="${index}" type="text" inputmode="decimal" placeholder="ex. 125" value="${escapeHtml(String(offer.content))}"><select data-price-field="unit" data-offer="${index}">${units(offer)}</select></span></label><label>Prix payé (€)<input data-price-field="price" data-offer="${index}" type="text" inputmode="decimal" placeholder="ex. 4,80" value="${escapeHtml(String(offer.price))}"></label><div class="price-result" aria-live="polite"><span>Prix équivalent</span><div>${priceResult(offer)}</div></div></article>`).join('')}</div>`;
+  renderPriceHistory();
 }
 function itemRow(item, bought) {
-  return `<div class="item-row${bought ? ' bought-row' : ''}"><input class="item-checkbox" data-id="${item.id}" aria-label="${bought ? 'Remettre' : 'Marquer comme acheté'} : ${escapeHtml(item.text)}" type="checkbox" ${bought ? 'checked' : ''}><span class="course-name" data-id="${item.id}">${escapeHtml(item.text)}</span><input class="note-text" data-id="${item.id}" aria-label="Précision pour ${escapeHtml(item.text)}" value="${escapeHtml(item.note || '')}"></div>`;
+  return `<div class="item-row${bought ? ' bought-row' : ''}"><button class="price-item-button" data-price-item-id="${item.id}" aria-label="Comparer le prix de ${escapeHtml(item.text)}">€</button><input class="item-checkbox" data-id="${item.id}" aria-label="${bought ? 'Remettre' : 'Marquer comme acheté'} : ${escapeHtml(item.text)}" type="checkbox" ${bought ? 'checked' : ''}><span class="course-name" data-id="${item.id}">${escapeHtml(item.text)}</span><input class="note-text" data-id="${item.id}" aria-label="Précision pour ${escapeHtml(item.text)}" value="${escapeHtml(item.note || '')}"></div>`;
 }
 function render() {
   const catalog = [...state.catalog].sort((a, b) => a.text.localeCompare(b.text, 'fr', { sensitivity: 'base' }));
@@ -72,10 +145,12 @@ function render() {
 $('#add-left').onclick = () => addItems('left');
 $('#add-right').onclick = () => addItems('right');
 $('#items-input').onkeydown = (event) => { if (event.key === 'Enter') { event.preventDefault(); addItems(); } };
-$('#validate-selection').onclick = () => { state.items = state.catalog.filter((item) => item.selected).map((item) => ({ id: makeId(), text: item.text, note: '', bought: false })); save(); showView('courses'); };
+$('#validate-selection').onclick = () => { const selected = state.catalog.filter((item) => item.selected); state.items = selected.map((item) => ({ id: makeId(), text: item.text, note: '', bought: false })); save(); showView('courses'); };
 $('#help-button').onclick = () => { $('#help-window').hidden = false; };
 $('#courses-help-button').onclick = () => { $('#help-window').hidden = false; };
 $('#back-to-selection').onclick = () => showView('selection');
+$('#close-price-compare').onclick = () => showView(previousView);
+$('#save-price-comparison').onclick = savePriceComparison;
 $('#help-close').onclick = () => { $('#help-window').hidden = true; };
 $('#help-window').onclick = (event) => { if (event.target.id === 'help-window') $('#help-window').hidden = true; };
 function downloadBackup(file) { const link = document.createElement('a'); link.href = URL.createObjectURL(file); link.download = file.name; link.click(); window.setTimeout(() => URL.revokeObjectURL(link.href), 1000); }
@@ -105,8 +180,34 @@ document.addEventListener('change', (event) => {
   }
   if (event.target.classList.contains('item-text')) { const item = state.items.find((entry) => entry.id === event.target.dataset.id); const text = event.target.value.trim(); if (!text) state.items = state.items.filter((entry) => entry.id !== item.id); else item.text = text; save(); }
   if (event.target.classList.contains('note-text')) { const item = state.items.find((entry) => entry.id === event.target.dataset.id); item.note = event.target.value; save(); }
+  if (event.target.dataset.priceField) {
+    const offer = priceOffers[Number(event.target.dataset.offer)];
+    offer[event.target.dataset.priceField] = event.target.value;
+    savePriceDraft();
+    renderPriceComparator();
+  }
+});
+document.addEventListener('input', (event) => {
+  if (!event.target.dataset.priceField) return;
+  const offer = priceOffers[Number(event.target.dataset.offer)];
+  offer[event.target.dataset.priceField] = event.target.value;
+  savePriceDraft();
+  if (event.target.dataset.priceField !== 'type' && event.target.dataset.priceField !== 'unit') {
+    const result = event.target.closest('.price-offer').querySelector('.price-result > div');
+    result.innerHTML = priceResult(offer);
+  }
 });
 document.addEventListener('click', (event) => {
+  if (event.target.id === 'reset-unit-lock') { priceOffers.forEach((offer) => { offer.unit = ''; }); savePriceDraft(); renderPriceComparator(); }
+  if (event.target.classList.contains('delete-history-button')) {
+    const historyIndex = Number(event.target.dataset.historyIndex);
+    if (Number.isInteger(historyIndex) && window.confirm('Supprimer cette comparaison mémorisée ?')) {
+      priceHistory.splice(historyIndex, 1);
+      localStorage.setItem(PRICE_HISTORY_KEY, JSON.stringify(priceHistory));
+      renderPriceHistory();
+    }
+  }
+  if (event.target.classList.contains('price-item-button')) { const item = state.items.find((entry) => entry.id === event.target.dataset.priceItemId); if (item) { setPriceArticleName(item.text); priceOffers = emptyPriceOffers(); savePriceDraft(); showView('price'); } }
   if (event.target.classList.contains('catalog-name')) { if (longPressActive) { longPressActive = false; return; } const item = state.catalog.find((entry) => entry.id === event.target.dataset.catalogId); item.selected = !item.selected; save(); }
   if (event.target.classList.contains('catalog-column-button')) { const item = state.catalog.find((entry) => entry.id === event.target.dataset.catalogId); if (item) { item.column = item.column === 'right' ? 'left' : 'right'; save(); } }
   if (event.target.classList.contains('course-name')) { const item = state.items.find((entry) => entry.id === event.target.dataset.id); item.bought = !item.bought; save(); }
