@@ -102,7 +102,7 @@ function savePriceComparison() {
   renderPriceHistory();
 }
 function renderPriceComparator() {
-  $('#price-article-name').textContent = priceArticleName ? `— ${priceArticleName}` : '— article à choisir';
+  $('#price-article-name').textContent = priceArticleName ? `— ${priceArticleName}` : '';
   const kind = comparisonKind();
   const units = (offer) => {
     const options = [['kg', 'kg'], ['g', 'g'], ['l', 'L'], ['cl', 'cl']];
@@ -113,7 +113,7 @@ function renderPriceComparator() {
   renderPriceHistory();
 }
 function itemRow(item, bought) {
-  return `<div class="item-row${bought ? ' bought-row' : ''}"><button class="price-item-button" data-price-item-id="${item.id}" aria-label="Comparer le prix de ${escapeHtml(item.text)}">€</button><input class="item-checkbox" data-id="${item.id}" aria-label="${bought ? 'Remettre' : 'Marquer comme acheté'} : ${escapeHtml(item.text)}" type="checkbox" ${bought ? 'checked' : ''}><span class="course-name" data-id="${item.id}">${escapeHtml(item.text)}</span><input class="note-text" data-id="${item.id}" aria-label="Précision pour ${escapeHtml(item.text)}" value="${escapeHtml(item.note || '')}"></div>`;
+  return `<div class="item-row${bought ? ' bought-row' : ''}"><input class="item-checkbox" data-id="${item.id}" aria-label="${bought ? 'Remettre' : 'Marquer comme acheté'} : ${escapeHtml(item.text)}" type="checkbox" ${bought ? 'checked' : ''}><span class="course-name" data-id="${item.id}">${escapeHtml(item.text)}</span><input class="note-text" data-id="${item.id}" aria-label="Précision pour ${escapeHtml(item.text)}" value="${escapeHtml(item.note || '')}"></div>`;
 }
 function render() {
   const catalog = [...state.catalog].sort((a, b) => a.text.localeCompare(b.text, 'fr', { sensitivity: 'base' }));
@@ -150,6 +150,7 @@ $('#help-button').onclick = () => { $('#help-window').hidden = false; };
 $('#courses-help-button').onclick = () => { $('#help-window').hidden = false; };
 $('#back-to-selection').onclick = () => showView('selection');
 $('#close-price-compare').onclick = () => showView(previousView);
+$('#open-price-compare').onclick = () => { setPriceArticleName(''); showView('price'); };
 $('#save-price-comparison').onclick = savePriceComparison;
 $('#help-close').onclick = () => { $('#help-window').hidden = true; };
 $('#help-window').onclick = (event) => { if (event.target.id === 'help-window') $('#help-window').hidden = true; };
@@ -207,7 +208,6 @@ document.addEventListener('click', (event) => {
       renderPriceHistory();
     }
   }
-  if (event.target.classList.contains('price-item-button')) { const item = state.items.find((entry) => entry.id === event.target.dataset.priceItemId); if (item) { setPriceArticleName(item.text); priceOffers = emptyPriceOffers(); savePriceDraft(); showView('price'); } }
   if (event.target.classList.contains('catalog-name')) { if (longPressActive) { longPressActive = false; return; } const item = state.catalog.find((entry) => entry.id === event.target.dataset.catalogId); item.selected = !item.selected; save(); }
   if (event.target.classList.contains('catalog-column-button')) { const item = state.catalog.find((entry) => entry.id === event.target.dataset.catalogId); if (item) { item.column = item.column === 'right' ? 'left' : 'right'; save(); } }
   if (event.target.classList.contains('course-name')) { const item = state.items.find((entry) => entry.id === event.target.dataset.id); item.bought = !item.bought; save(); }

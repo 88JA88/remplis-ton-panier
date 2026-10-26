@@ -39,7 +39,6 @@ button:focus-visible, textarea:focus-visible, input:focus-visible { outline: 3px
 .catalog-text:focus { border-color:#7b8993; background:white; }
 .catalog-item.alphabet-break { margin-top: 4px; }
 .catalog-item input[type="checkbox"] { width:18px; height:18px; margin:0; accent-color:#176b3a; }
-.price-item-button { width:22px; min-height:22px; padding:0; flex:0 0 auto; color:#176b3a; border:1px solid #176b3a; border-radius:5px; background:#fff; font-size:.78rem; }
 .catalog-delete { width:22px; min-height:24px; padding:0; color:#8b1e1e; background:transparent; font-size:1.2rem; font-weight:400; line-height:1; }
 .catalog-column-button { width:22px; min-height:22px; padding:0; color:#244b70; background:white; border:1px solid #244b70; border-radius:5px; font-size:.68rem; }
 .validate-button { min-height:32px; padding:3px 8px; color:#27313b; background:white; border:2px solid #244b70; font-size:.82rem; }
@@ -60,9 +59,12 @@ input#items-input { min-width: 0; height: 40px; padding: 7px 9px; border: 2px so
 #backup-button { min-height:32px; padding:3px 8px; color:#27313b; background:#e1e6e9; border:1px solid #95a3ad; font-size:.82rem; }
 .dictation-status { margin: 5px 0 0; color: #176b3a; font-size: .82rem; }
 .list-heading { display: flex; justify-content: space-between; align-items: baseline; padding: 6px 0 4px; border-bottom: 1px solid #788792; }
+.list-heading-actions { display:flex; align-items:center; gap:8px; }
+.list-heading-actions h2 { margin:0; }
+.price-compare-button { min-height:29px; padding:3px 8px; color:#fff; background:#176b3a; border:1px solid #12582f; border-radius:6px; font-size:.78rem; font-weight:700; }
 #item-count, #bought-count { color: #53616d; font-size: .95rem; }
 .shopping-list { margin: 0; }
-.item-row { display: grid; grid-template-columns: 22px 27px minmax(0, 1fr) minmax(88px, .75fr); align-items: center; column-gap: 5px; min-height: 39px; padding-left: 22px; padding-right: 22px; border-bottom: 1px solid #c9d1d6; }
+.item-row { display: grid; grid-template-columns: 22px minmax(0, 1fr) minmax(88px, .75fr); align-items: center; column-gap: 5px; min-height: 39px; padding-left: 22px; padding-right: 22px; border-bottom: 1px solid #c9d1d6; }
 .item-row.checking { background: #e5f2e9; }
 .bought-row { opacity: .72; }
 .item-checkbox { width: 22px; height: 22px; accent-color: #176b3a; cursor: pointer; }
