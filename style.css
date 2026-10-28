@@ -53,7 +53,6 @@ button:focus-visible, textarea:focus-visible, input:focus-visible { outline: 3px
 .help-card p { margin:12px 0; font-size:.92rem; line-height:1.4; }
 .help-close { width:30px; min-height:30px; padding:0; color:#8b1e1e; background:transparent; font-size:1.35rem; font-weight:400; }
 .key-card { width:min(100%,440px); }
-.key-note { color:#5b6873; }
 .key-fields { display:grid; gap:9px; }
 .key-fields label { display:grid; gap:4px; color:#53616d; font-size:.84rem; font-weight:700; }
 .key-fields input { width:100%; min-height:38px; padding:6px 8px; border:1px solid #9eabb4; border-radius:6px; background:#fff; color:#19232d; }
