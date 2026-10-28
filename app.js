@@ -2,6 +2,7 @@ const STORAGE_KEY = 'liste-courses-v3';
 const PRICE_DRAFT_KEY = 'liste-courses-price-draft-v1';
 const PRICE_HISTORY_KEY = 'liste-courses-price-history-v1';
 const PRICE_ARTICLE_KEY = 'liste-courses-price-article-v1';
+const KEY_FIELDS_STORAGE_KEY = 'liste-courses-key-fields-v1';
 const STARTER_CATALOG = ['Pain', 'Lait', 'Œufs', 'Beurre', 'Fruits', 'Légumes', 'Pâtes', 'Riz', 'Café', 'Eau'];
 const $ = (selector) => document.querySelector(selector);
 let recognition = null;
@@ -20,8 +21,12 @@ function loadPriceHistory() { try { const stored = JSON.parse(localStorage.getIt
 let priceOffers = loadPriceOffers();
 let priceHistory = loadPriceHistory();
 let priceArticleName = localStorage.getItem(PRICE_ARTICLE_KEY) || '';
+let keyFields = loadKeyFields();
 function savePriceDraft() { localStorage.setItem(PRICE_DRAFT_KEY, JSON.stringify(priceOffers)); }
 function setPriceArticleName(name) { priceArticleName = name || ''; localStorage.setItem(PRICE_ARTICLE_KEY, priceArticleName); }
+function loadKeyFields() { try { const stored = JSON.parse(localStorage.getItem(KEY_FIELDS_STORAGE_KEY)); return Array.isArray(stored) ? Array.from({ length: 5 }, (_, index) => String(stored[index] || '')) : Array(5).fill(''); } catch { return Array(5).fill(''); } }
+function renderKeyFields() { document.querySelectorAll('[data-key-field]').forEach((input) => { input.value = keyFields[Number(input.dataset.keyField)] || ''; }); }
+function saveKeyFields() { localStorage.setItem(KEY_FIELDS_STORAGE_KEY, JSON.stringify(keyFields)); }
 
 function makeId() { return crypto.randomUUID?.() || `${Date.now()}-${Math.random()}`; }
 function loadState() {
@@ -154,6 +159,9 @@ $('#open-price-compare').onclick = () => { setPriceArticleName(''); showView('pr
 $('#save-price-comparison').onclick = savePriceComparison;
 $('#help-close').onclick = () => { $('#help-window').hidden = true; };
 $('#help-window').onclick = (event) => { if (event.target.id === 'help-window') $('#help-window').hidden = true; };
+$('#key-button').onclick = () => { renderKeyFields(); $('#key-window').hidden = false; $('#key-window [data-key-field="0"]').focus(); };
+$('#key-close').onclick = () => { $('#key-window').hidden = true; };
+$('#key-window').onclick = (event) => { if (event.target.id === 'key-window') $('#key-window').hidden = true; };
 function downloadBackup(file) { const link = document.createElement('a'); link.href = URL.createObjectURL(file); link.download = file.name; link.click(); window.setTimeout(() => URL.revokeObjectURL(link.href), 1000); }
 $('#backup-button').onclick = async () => {
   const date = new Date().toISOString().slice(0, 10);
@@ -189,6 +197,7 @@ document.addEventListener('change', (event) => {
   }
 });
 document.addEventListener('input', (event) => {
+  if (event.target.dataset.keyField) { keyFields[Number(event.target.dataset.keyField)] = event.target.value; saveKeyFields(); return; }
   if (!event.target.dataset.priceField) return;
   const offer = priceOffers[Number(event.target.dataset.offer)];
   offer[event.target.dataset.priceField] = event.target.value;

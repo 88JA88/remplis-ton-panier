@@ -52,11 +52,17 @@ button:focus-visible, textarea:focus-visible, input:focus-visible { outline: 3px
 .help-heading h2 { margin:0; }
 .help-card p { margin:12px 0; font-size:.92rem; line-height:1.4; }
 .help-close { width:30px; min-height:30px; padding:0; color:#8b1e1e; background:transparent; font-size:1.35rem; font-weight:400; }
+.key-card { width:min(100%,440px); }
+.key-note { color:#5b6873; }
+.key-fields { display:grid; gap:9px; }
+.key-fields label { display:grid; gap:4px; color:#53616d; font-size:.84rem; font-weight:700; }
+.key-fields input { width:100%; min-height:38px; padding:6px 8px; border:1px solid #9eabb4; border-radius:6px; background:#fff; color:#19232d; }
 .current-section { padding-top:12px; }
-.add-row { display: grid; grid-template-columns:40% 45px 45px max-content; align-items: stretch; gap: 4px; }
+.add-row { display: grid; grid-template-columns:40% 45px 45px max-content 34px; align-items: stretch; gap: 4px; }
 input#items-input { min-width: 0; height: 40px; padding: 7px 9px; border: 2px solid #1f6fae; border-radius: 7px; background: white; font-size: 1rem; }
 .add-column-button { width:45px; min-height:32px; padding:0; color:#1f6fae; background:white; border:2px solid #1f6fae; border-radius:6px; font-size:.72rem; }
 #backup-button { min-height:32px; padding:3px 8px; color:#27313b; background:#e1e6e9; border:1px solid #95a3ad; font-size:.82rem; }
+.key-button { width:34px; min-height:32px; padding:0; border:1px solid #95a3ad; border-radius:6px; background:#e1e6e9; font-size:1rem; }
 .dictation-status { margin: 5px 0 0; color: #176b3a; font-size: .82rem; }
 .list-heading { display: flex; justify-content: space-between; align-items: baseline; padding: 6px 0 4px; border-bottom: 1px solid #788792; }
 .list-heading-actions { display:flex; align-items:center; gap:8px; }
